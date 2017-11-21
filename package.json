@@ -1,0 +1,46 @@
+{
+  "name": "docblock-reader",
+  "version": "1.0.0-dev",
+  "description": "A docblock parser.",
+  "main": "src/",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-jest": "^21.2.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-node6": "^11.0.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "eslint-config-johnwatkins0": "^1.0.6",
+    "jest": "^21.2.1",
+    "regenerator-runtime": "^0.11.0"
+  },
+  "babel": {
+    "presets": ["env", "stage-0", "node6"]
+  },
+  "eslintIgnore": ["__tests__/testfiles/*"],
+  "eslintConfig": {
+    "extends": "johnwatkins0",
+    "rules": {
+      "no-console": 0,
+      "import/prefer-default-export": 0,
+      "no-mixed-operators": 0
+    },
+    "globals": {
+      "test": true,
+      "expect": true
+    }
+  },
+  "jest": {
+    "testPathIgnorePatterns": ["__tests__/testfiles/"],
+    "collectCoverage": true
+  },
+  "dependencies": {
+    "glob": "^7.1.2"
+  }
+}
