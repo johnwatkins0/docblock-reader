@@ -10,17 +10,13 @@ function balanceParens(line) {
 }
 
 function getNextLine({ docblock, data }) {
-  const db = docblock.indexOf('*/') > -1 ? docblock.split('*/')[0] : null;
+  const db = docblock.split('*/')[0];
   let nextLine;
 
-  try {
-    nextLine = data
-      .split(`${db}*/`)
-      .slice(1)[0]
-      .trim();
-  } catch (e) {
-    return '';
-  }
+  nextLine = data
+    .split(`${db}*/`)
+    .slice(1)[0]
+    .trim();
 
   nextLine = nextLine.indexOf('\n') > -1 ? nextLine.substring(0, nextLine.indexOf('\n')) : '';
   nextLine = nextLine.indexOf(' {') > -1 ? nextLine.substring(0, nextLine.indexOf(' {')) : nextLine;

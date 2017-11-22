@@ -3,7 +3,7 @@ import { getDocblocksFromFile } from './getDocblocksFromFile';
 import { getDocblockParts } from './getDocblockParts';
 import { parseTag } from './parseTag';
 
-function parseDocblock(docblock, context = 'javascript') {
+function parseDocblock(docblock, context) {
   const parts = getDocblockParts(docblock.docblock);
 
   parts.tags = parts.tags.map(tag => parseTag(tag, context));
@@ -11,15 +11,15 @@ function parseDocblock(docblock, context = 'javascript') {
   return parts;
 }
 
-function getFilesFromGlob(globString = '**/*.js') {
+export function getFilesFromGlob(globString) {
   return new Promise((resolve) => {
-    glob(globString, {}, (err, files) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      resolve(files);
-    });
+    try {
+      glob(globString, {}, (err, files) => {
+        resolve(files);
+      });
+    } catch (e) {
+      resolve([]);
+    }
   });
 }
 
@@ -29,29 +29,21 @@ function getFilesFromGlob(globString = '**/*.js') {
  * @param {string} [context='javascript'] [description]
  * @return {Array} The parsed docblocks.
  */
-async function getDocblocks({ files, context = 'javascript', callback }) {
-  if (!files) {
-    throw new Error('No files specified.');
-  }
+function getDocblocks({ files, context = 'javascript' }) {
+  return new Promise(async (resolve) => {
+    let filesArray;
+    if (typeof files === 'string') {
+      filesArray = await getFilesFromGlob(files);
+    } else {
+      filesArray = files;
+    }
 
-  if (!callback) {
-    throw new Error('No callback specified.');
-  }
+    const output = filesArray
+      .reduce((db, file) => db.concat(getDocblocksFromFile(file)), [])
+      .map(docblock => parseDocblock(docblock, context));
 
-  let filesArray;
-  if (typeof files === 'string') {
-    filesArray = await getFilesFromGlob(files);
-  } else {
-    filesArray = files;
-  }
-
-  const output = filesArray
-    .reduce((db, file) => db.concat(getDocblocksFromFile(file)), [])
-    .map(docblock => parseDocblock(docblock, context));
-
-  if (callback) {
-    callback(output);
-  }
+    resolve(output);
+  });
 }
 
 export default getDocblocks;

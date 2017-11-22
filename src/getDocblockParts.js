@@ -1,3 +1,8 @@
+/**
+ * Gets the first block of text from a docblock (usually the description).
+ * @param {Array} descriptionLines The pre-tag docblock split at '\n'.
+ * @return {Object} The description and the remaining description lines.
+ */
 function getDescription(descriptionLines) {
   let description = '';
 
@@ -8,12 +13,17 @@ function getDescription(descriptionLines) {
 
   while (nextLine && nextLine.trim() !== '*') {
     description += nextLine;
-    nextLine = descriptionLines ? descriptionLines.shift() : null;
+    nextLine = descriptionLines.shift();
   }
 
   return { description, descriptionLines };
 }
 
+/**
+ * Gets the longer description if it exists.
+ * @param {Array} descriptionLines The pre-tag, post-description docblock split at '\n'.
+ * @return {string} The long description.
+ */
 function getLongDescription(descriptionLines) {
   let longDescription = '';
 
@@ -22,7 +32,7 @@ function getLongDescription(descriptionLines) {
 
     while (nextLine && nextLine.trim() !== '*') {
       longDescription += nextLine.trim();
-      nextLine = descriptionLines ? descriptionLines.shift() : null;
+      nextLine = descriptionLines.shift();
     }
 
     if (descriptionLines.length) {

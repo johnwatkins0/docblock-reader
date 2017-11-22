@@ -1,21 +1,63 @@
+export function getTagParts(tagString) {
+  return tagString
+    .split(' ')
+    .map(item => item.replace(/ \*|\* /g, '').trim())
+    .filter(item => item);
+}
+
+export function getDescriptionOnly(string) {
+  return string
+    .split(' ')
+    .map(item => item.replace(/\*/g, '').trim())
+    .filter(item => item)
+    .join(' ');
+}
+
 /**
  * Extracts the parts from a WordPress docblock tag string describing a variable.
  * @param {string} string The input string.
  * @return {Object} An object containing the output.
  */
 export function parseWordPressVariableTagDescription(string) {
-  const parts = string
-    .split(' ')
-    .map(item => item.replace(/\*/g, '').trim())
-    .filter(item => item);
+  const parts = getTagParts(string);
+  const variableType = parts.shift();
+  const variableName = parts[0] && parts[0].indexOf('$') > -1 ? parts.shift() : '';
+  const description = getDescriptionOnly(parts.join(' '));
 
-  const type = parts.shift();
+  return { type: variableType, variable: variableName, description };
+}
 
-  const variable = parts[0] && parts[0].indexOf('$') > -1 ? parts.shift() : '';
+/**
+ * Extracts the parts from a Javascript param docblock tag.
+ * @param {string} string The input string.
+ * @return {Object} An object containing the output.
+ */
+export function parseJavascriptParamDescription(string) {
+  const parts = getTagParts(string);
+  const variableType = parts
+    .shift()
+    .replace('{', '')
+    .replace('}', '');
+  const variableName = parts.shift();
+  const description = getDescriptionOnly(parts.join(' '));
 
-  const description = parts.join(' ');
+  return { type: variableType, variable: variableName, description };
+}
 
-  return { type, variable, description };
+/**
+ * Extracts the parts from a Javascript return docblock tag.
+ * @param {string} string The input string.
+ * @return {Object} An object containing the output.
+ */
+export function parseJavascriptReturnDescription(string) {
+  const parts = getTagParts(string);
+  const variableType = parts
+    .shift()
+    .replace('{', '')
+    .replace('}', '');
+  const description = getDescriptionOnly(parts.join(' '));
+
+  return { type: variableType, description };
 }
 
 /**
@@ -42,11 +84,7 @@ export function parseWordPressTag({ tag, string }) {
     case 'see':
     case 'since': {
       return {
-        description: string
-          .split(' ')
-          .map(item => item.replace(/\*/g, '').trim())
-          .filter(item => item)
-          .join(' '),
+        description: getDescriptionOnly(string),
       };
     }
 
@@ -54,56 +92,6 @@ export function parseWordPressTag({ tag, string }) {
       return {};
     }
   }
-}
-
-/**
- * Extracts the parts from a Javascript param docblock tag.
- * @param {string} string The input string.
- * @return {Object} An object containing the output.
- */
-export function parseJavascriptParamDescription(string) {
-  const parts = string
-    .split(' ')
-    .map(item => item.trim())
-    .filter(item => item);
-
-  const type = parts
-    .shift()
-    .replace('{', '')
-    .replace('}', '');
-
-  const variable = parts[0] ? parts.shift() : '';
-
-  const description = parts
-    .map(item => item.replace(/\*/g, '').trim())
-    .filter(item => item)
-    .join(' ');
-
-  return { type, variable, description };
-}
-
-/**
- * Extracts the parts from a Javascript return docblock tag.
- * @param {string} string The input string.
- * @return {Object} An object containing the output.
- */
-export function parseJavascriptReturnDescription(string) {
-  const parts = string
-    .split(' ')
-    .map(item => item.trim())
-    .filter(item => item);
-
-  const type = parts
-    .shift()
-    .replace('{', '')
-    .replace('}', '');
-
-  const description = parts
-    .map(item => item.replace(/\*/g, '').trim())
-    .filter(item => item)
-    .join(' ');
-
-  return { type, description };
 }
 
 /**

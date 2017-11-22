@@ -1,41 +1,41 @@
 import path from 'path';
-import getDocblocks from '../src/getDocblocks';
+import getDocblocks, { getFilesFromGlob } from '../src/getDocblocks';
 
-test('get docblocks', () => {
+test('Passing no configuration object throws an error.', () => {
   expect(getDocblocks).toThrow(TypeError);
 });
 
-test('get docblocks', (done) => {
-  getDocblocks({
+test('Gets the right number of JS docblocks from glob.', async () => {
+  const docblocks = await getDocblocks({
     files: path.resolve(__dirname, 'testfiles/*.js'),
-    callback: (docblocks) => {
-      expect(docblocks.length).toBe(11);
-      done();
-    },
   });
+
+  expect(docblocks.length).toBe(11);
 });
 
-test('get docblocks', (done) => {
-  getDocblocks({
+test('Gets the right number of PHP docblocks from glob with multiple files.', async () => {
+  const docblocks = await getDocblocks({
     files: path.resolve(__dirname, 'testfiles/*.php'),
     context: 'wordpress',
-    callback: (docblocks) => {
-      expect(docblocks.length).toBe(373);
-      done();
-    },
   });
+
+  expect(docblocks.length).toBe(373);
 });
 
-test('get docblocks', (done) => {
-  getDocblocks({
+test('Gets the right number of PHP docblocks with the files passed as an array.', async () => {
+  const docblocks = await getDocblocks({
     files: [
       path.resolve(__dirname, 'testfiles/class-wp-query.php'),
       path.resolve(__dirname, 'testfiles/wordpress-file.php'),
     ],
     context: 'wordpress',
-    callback: (docblocks) => {
-      expect(docblocks.length).toBe(373);
-      done();
-    },
   });
+
+  expect(docblocks.length).toBe(373);
+});
+
+test('Passing invalid glob returns empty array.', async () => {
+  const files = await getFilesFromGlob({});
+
+  expect(files).toEqual([]);
 });

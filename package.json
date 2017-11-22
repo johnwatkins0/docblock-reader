@@ -1,7 +1,8 @@
 {
   "name": "docblock-reader",
   "version": "1.0.0-dev",
-  "description": "A docblock parser.",
+  "description":
+    "A docblock parser. Currently in development, starting with support for docblocks formatted based on JSDoc and WordPress standards.",
   "main": "src/",
   "scripts": {
     "test": "jest"
